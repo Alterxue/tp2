@@ -10,8 +10,7 @@
 #ifndef TRAJET_H
 
 #define TRAJET_H
-#include <iostream>
-#include <cstring>
+
 
 //--------------------------------------------------- Interfaces utilisées
 
@@ -34,7 +33,7 @@ class Trajet
     
 //----------------------------------------------------- Méthodes publiques
     
-    virtual void Afficher() const;
+    virtual void Afficher() const = 0;
     // Mode d'emploi :
     // Affiche sur la sortie standard les détails complets du Trajet. 
     // Pour un TrajetSimple, affiche les villes et le moyen de transport. 
