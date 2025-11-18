@@ -67,7 +67,7 @@ class Trajet
 
 //-------------------------------------------- Constructeurs - destructeur
     
-    Trajet( const char* villeDepart, const char* villeArrivee );
+    Trajet( const char* m_villeDepart, const char* m_villeArrivee );
     // Mode d'emploi :
     // Construit un nouvel objet Trajet. 
     // Il est chargé d'allouer dynamiquement la mémoire pour stocker les noms des villes de départ et d'arrivée.
@@ -97,12 +97,12 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 
-    char * villeDepart;
-    char * villeArrivee;
+    char * m_villeDepart;
+    char * m_villeArrivee;
 
 };
 
 //-------------------------------- Autres définitions dépendantes de <Ensemble>
 
-#endif TRAJET_H
+#endif // TRAJET_H
 
