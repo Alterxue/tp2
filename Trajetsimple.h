@@ -37,7 +37,7 @@ public:
     //
     // Contrat :
     // Ne modifie pas l'objet (const).
-    void Afficher() const;
+    virtual void Afficher() const;
 
     // type Méthode ( liste des paramètres );
     // Mode d'emploi :
@@ -45,7 +45,7 @@ public:
     //
     // Contrat :
     // Ne modifie pas l'objet (const).
-    const char * GetVilleDepart() const;
+    virtual const char * GetVilleDepart() const;
 
     // type Méthode ( liste des paramètres );
     // Mode d'emploi :
@@ -53,7 +53,7 @@ public:
     //
     // Contrat :
     // Ne modifie pas l'objet (const).
-    const char * GetVilleArrivee() const;
+    virtual const char * GetVilleArrivee() const;
 
     
 
