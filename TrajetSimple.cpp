@@ -15,7 +15,7 @@ using namespace std;
 #include <iostream>
 #include <cstring>
 //------------------------------------------------------ Include personnel
-#include "Trajet.h"
+#include "TrajetSimple.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -28,23 +28,24 @@ using namespace std;
 //{
 //} //----- Fin de Méthode
 
-//-------------------------------------------- Constructeurs - destructeur
-Trajet::Trajet (const char* depart, const char* arrivee)
+TrajetSimple::TrajetSimple (const char* villeDepart, const char* villeArrivee, const char* moyenTransport
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au constructeur de <Trajet>" << endl;
+    cout << "Appel au constructeur de <Xxx>" << endl;
 #endif
-m_villeDepart= new char[strlen(depart)+1];
-strcpy(m_villeDepart,depart);
-m_villeArrivee= new char[strlen(arrivee)+1];
-strcpy(m_villeArrivee,arrivee);
+m_villeDepart= new char[strlen(villeDepart)+1];
+strcpy(m_villeDepart,villeDepart);
+m_villeArrivee= new char[strlen(villeArrivee)+1];
+strcpy(m_villeArrivee,villeArrivee);
+m_moyenTransport= new char[strlen(moyenTransport)+1];
+strcpy(m_moyenTransport,moyenTransport);
 }
- //----- Fin de Xxx
+//----- Fin de Xxx
 
 
-Trajet::~Trajet ( )
+TrajetSimple::~TrajetSimple ( )
 // Algorithme :
 //
 {
@@ -53,18 +54,22 @@ Trajet::~Trajet ( )
 #endif
 delete[] m_villeDepart;
 delete[] m_villeArrivee;
-} //----- Fin de ~Xxx 
+delete[] m_moyenTransport;
+} //----- Fin de ~Xxx
 
-const char * Trajet::GetVilleDepart() const{
+const char* TrajetSimple::GetVilleDepart() const
+{
     return m_villeDepart;
 }
 
-const char * Trajet::GetVilleArrivee() const{
+const char* TrajetSimple::GetVilleArrivee() const
+{
     return m_villeArrivee;
 }
 
-void Trajet::Afficher() const{
-    cout << m_villeDepart << "->" << m_villeArrivee << " ";
+void TrajetSimple::Afficher() const {
+    Trajet::Afficher();
+    cout << " en " << m_moyenTransport << endl;
 }
 //------------------------------------------------------------------ PRIVE
 
