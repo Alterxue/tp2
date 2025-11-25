@@ -77,7 +77,7 @@ class Trajet
     // La classe doit effectuer une copie profonde (deep copy) des chaînes de caractères fournies.
     // Les classes dérivées appellent ce constructeur pour initialiser la partie mère.
 
-   
+    
     virtual ~Trajet();
     // Mode d'emploi :
     // Libère la mémoire allouée dynamiquement par le constructeur pour stocker les noms des villes (villeDepart et villeArrivee).
