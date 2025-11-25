@@ -158,8 +158,8 @@ TrajetCompose & TrajetCompose::operator = ( const TrajetCompose & unTrajetCompos
 TrajetCompose::TrajetCompose ( const TrajetCompose & unTrajetCompose ) 
     // IMPORTANT : Appel au constructeur de copie de la classe mère, car elle gère l'allocation des villes.
     : Trajet(unTrajetCompose), 
-      m_tailleMax(unTrajetCompose.m_tailleMax), 
-      m_nbTrajets(unTrajetCompose.m_nbTrajets)
+      m_nbTrajets(unTrajetCompose.m_nbTrajets),
+      m_tailleMax(unTrajetCompose.m_tailleMax)
 // Algorithme :
 // 1. Appel du constructeur de copie de la classe mère.
 // 2. Initialisation des attributs de taille.

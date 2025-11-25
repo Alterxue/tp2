@@ -66,6 +66,7 @@ public:
     //
     // Contrat :
     // Les paramètres doivent être des pointeurs valides (non NULL).
+    TrajetSimple ( const TrajetSimple & unTrajetSimple );
 
     virtual ~TrajetSimple ( );
     // Mode d'emploi :
@@ -75,6 +76,7 @@ public:
     // Contrat :
     // Assure la libération de toutes les ressources dynamiques propres à TrajetSimple.
 
+    TrajetSimple & operator = ( const TrajetSimple & unTrajetSimple );
 //------------------------------------------------------------------ PRIVE
 
 protected:
