@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport TP2 - 4 Pages Strictes</title>
+    <style>
+        /* RESET ET CONFIGURATION GLOBALE */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #525659; /* Gris foncé pour l'aperçu écran */
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        /* CONFIGURATION DES PAGES PAPIER */
+        @page {
+            size: A4;
+            margin: 0; /* IMPORTANT : On gère les marges nous-mêmes dans les div */
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm; /* Hauteur exacte A4 */
+            background: white;
+            margin: 10px auto; /* Espace entre les pages à l'écran */
+            padding: 20mm; /* VRAIES MARGES D'IMPRESSION ICI */
+            position: relative;
+            overflow: hidden; /* Empêche tout débordement de créer une nouvelle page */
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* POUR L'IMPRESSION */
+        @media print {
+            body {
+                background: none;
+            }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always; /* Force le saut de page après chaque bloc */
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* TYPOGRAPHIE INTERNE */
+        h1 { font-size: 20pt; text-align: center; margin: 0 0 5px 0; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 5px; }
+        .subtitle { font-size: 14pt; text-align: center; font-style: italic; margin-bottom: 20px; }
+        
+        h2 { 
+            font-size: 14pt; 
+            background-color: #eee; 
+            border-left: 5px solid #333; 
+            padding: 5px 10px; 
+            margin: 20px 0 10px 0; 
+        }
+
+        h3 { font-size: 12pt; font-weight: bold; text-decoration: underline; margin: 15px 0 5px 0; }
+        
+        p, li { font-size: 11pt; line-height: 1.3; text-align: justify; margin-bottom: 5px; }
+        ul, ol { margin-top: 0; padding-left: 25px; }
+
+        /* TABLEAUX ET DIAGRAMMES */
+        table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 10px 0; }
+        th, td { border: 1px solid black; padding: 4px; text-align: center; }
+        th { background: #ddd; }
+        td:first-child { text-align: left; font-weight: bold; }
+
+        .diagram {
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 8pt; /* Taille réduite pour tout faire rentrer */
+            background: #fcfcfc;
+            border: 1px solid #999;
+            padding: 10px;
+            white-space: pre;
+            line-height: 1.1;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .meta-box { border: 1px solid black; padding: 10px; margin-bottom: 20px; background: #f9f9f9; font-size: 11pt; }
+        .page-number { position: absolute; bottom: 10mm; right: 20mm; font-size: 10pt; color: #666; }
+
+    </style>
+</head>
+<body>
+
+    <div class="no-print" style="background:#ffcccc; padding:10px; text-align:center; color:red; font-weight:bold;">
+        ATTENTION : Lors de l'impression (Ctrl+P), réglez les marges sur "AUCUNE" ou "MINIMUM" !
+    </div>
+
+    <div class="page">
+        <h1>Rapport TP2 - C++</h1>
+        <div class="subtitle">Héritage et Polymorphisme : Gestionnaire de Trajets</div>
+
+        <div class="meta-box" style="padding: 5px 10px; margin-bottom: 10px;">
+            <strong>Binôme n° :</strong> [B3403] &nbsp;&nbsp; <strong>Membres :</strong> [BENCHEIKH Hamza] & [XUE Yuchen] &nbsp;&nbsp; <strong>Date :</strong> Décembre 2025
+        </div>
+
+        <h2>A. Description des Classes de l'Application</h2>
+
+        <h3>1. Architecture des Classes</h3>
+        <ul>
+            <li><strong>Trajet (Abstraite) :</strong> Interface commune avec villes départ/arrivée, méthode virtuelle pure <code>Afficher()</code>, destructeur virtuel.</li>
+            <li><strong>TrajetSimple :</strong> Hérite de Trajet. Ajoute un moyen de transport (char*).</li>
+            <li><strong>TrajetCompose :</strong> Hérite de Trajet. Agrège une collection de <code>TrajetSimple</code>.</li>
+            <li><strong>Catalogue :</strong> Gestionnaire avec tableau dynamique polymorphique de <code>Trajet*</code>.</li>
+        </ul>
+
+        <h3>2. Méthodes Clés</h3>
+        <ul>
+            <li><code>Catalogue::Ajouter(Trajet* t)</code> : Ajoute un trajet, gère la réallocation dynamique.</li>
+            <li><code>TrajetCompose::Ajouter(TrajetSimple* t)</code> : Ajoute une étape, vérifie la continuité.</li>
+            <li><code>Afficher()</code> : Méthode polymorphe pour lister le contenu.</li>
+        </ul>
+
+        <h3>3. Graphe d'Héritage</h3>
+        <div class="diagram" style="font-size: 7.5pt; line-height: 1.1;">
+                                 ┌───────────────────────────┐
+                                 │          Trajet           │
+                                 │     (Classe Abstraite)    │
+                                 │  # m_villeDepart : char*  │
+                                 │  # m_villeArrivee : char* │
+                                 │  + Afficher() = 0         │
+                                 │  + ~Trajet() virtual      │
+                                 └─────────────┬─────────────┘
+                                               │
+                    ┌──────────────────────────┴──────────────────────────┐
+                    │                                                     │
+                    ▼                                                     ▼
+       ┌──────────────────────────┐                 ┌─────────────────────────────────┐
+       │      TrajetSimple        │                 │         TrajetCompose           │
+       │  - m_moyenTransport      │                 │  - m_collectionTrajets : T**    │
+       │  + Afficher()            │                 │  - m_nbTrajets, m_tailleMax     │
+       │  + GetMoyenTransport()   │                 │  + Afficher(), AjouterTrajet()  │
+       └──────────────────────────┘                 └─────────────────────────────────┘
+                                                                  │ agrégation
+                                                                  ▼
+                                                    ┌───────────────────────┐
+                                                    │   TrajetSimple* []    │
+                                                    └───────────────────────┘
+
+       ┌─────────────────────────────────┐
+       │           Catalogue             │
+       │  - m_collectionTrajets : T**    │
+       │  - m_nbTrajets, m_tailleMax     │
+       │  + Afficher(), Ajouter()        │
+       │  + Rechercher()                 │
+       │  + RechercherAvance() [DFS]     │
+       └─────────────────────────────────┘
+                    │ agrégation polymorphique
+                    ▼
+       ┌───────────────────────┐
+       │      Trajet* []       │
+       └───────────────────────┘</div>
+        
+        <div class="page-number">Page 1 / 4</div>
+    </div>
+
+    <div class="page">
+        <h3>4. Justification de la Conception</h3>
+        <p>Le choix de l'héritage permet au <code>Catalogue</code> de ne gérer qu'un seul type de donnée : <code>Trajet*</code>. Cela respecte le principe Ouvert/Fermé (Open/Closed Principle).</p>
+
+        <table>
+            <thead>
+                <tr><th>Caractéristique</th><th>Trajet</th><th>TrajetSimple</th><th>TrajetCompose</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Villes (Dep/Arr)</td><td>Protected</td><td>Héritées</td><td>Héritées</td></tr>
+                <tr><td>Moyen Transport</td><td>-</td><td>Privé (char*)</td><td>-</td></tr>
+                <tr><td>Conteneur Enfants</td><td>-</td><td>-</td><td>Tableau Dyn.</td></tr>
+                <tr><td>Cycle de vie</td><td>Virtual Destructor</td><td>Destructor</td><td>Deep Destructor</td></tr>
+            </tbody>
+        </table>
+
+        <h2>B. Structure de Données et Mémoire</h2>
+        <p>Cette partie illustre la gestion mémoire pour le jeu d'essai "Catalogue C" demandé.</p>
+
+        <div style="background:#f0f0f0; padding:5px; border:1px solid #ccc; margin-bottom:10px; font-size:10pt;">
+            <strong>Jeu d'essai C :</strong><br>
+            1. <strong>TS1</strong> : Lyon → Bordeaux (Train)<br>
+            2. <strong>TC2</strong> : [Lyon → Marseille (Bateau)] + [Marseille → Paris (Avion)]<br>
+            3. <strong>TS3</strong> : Lyon → Paris (Auto)
+        </div>
+
+        <p>Le schéma ci-dessous détaille le <strong>Tas (Heap)</strong>. Il met en évidence :</p>
+        <ol>
+            <li>Le tableau principal de pointeurs <code>Trajet**</code> dans le Catalogue.</li>
+            <li>Les objets concrets (TS1, TC2, TS3) avec leur pointeur virtuel (<code>vptr</code>).</li>
+            <li>L'agrégation interne au Trajet Composé (TC2 possède son propre tableau dynamique).</li>
+        </ol>
+
+        <h3>1. Structure du Catalogue</h3>
+        <p>Le Catalogue utilise un tableau dynamique de pointeurs <code>Trajet**</code>. Chaque case pointe vers un objet concret (<code>TrajetSimple</code> ou <code>TrajetCompose</code>). Le polymorphisme permet d'appeler la bonne méthode <code>Afficher()</code> selon le type réel de l'objet.</p>
+
+        <h3>2. Gestion des Chaînes de Caractères</h3>
+        <p>Chaque attribut de type chaîne (<code>m_villeDepart</code>, <code>m_villeArrivee</code>, <code>m_moyenTransport</code>) est un pointeur <code>char*</code> vers un bloc mémoire alloué séparément sur le tas. La taille de chaque bloc correspond à <code>strlen(chaine) + 1</code> pour inclure le caractère nul <code>'\0'</code>.</p>
+
+        <h3>3. Pointeur Virtuel (vptr)</h3>
+        <p>Chaque objet polymorphe contient un pointeur caché (<code>vptr</code>) vers sa table de fonctions virtuelles (<code>vtable</code>). C'est ce mécanisme qui permet au compilateur de résoudre les appels de méthodes virtuelles à l'exécution (late binding).</p>
+
+        <h3>4. Agrégation dans TrajetCompose</h3>
+        <p>Un <code>TrajetCompose</code> contient son propre tableau dynamique de <code>TrajetSimple**</code>. Les villes de départ et d'arrivée du composé sont calculées dynamiquement : départ = premier sous-trajet, arrivée = dernier sous-trajet.</p>
+
+        <div class="page-number">Page 2 / 4</div>
+    </div>
+
+    <div class="page">
+        <h3>Représentation Mémoire Détaillée</h3>
+        <p>Voici la vue précise des blocs mémoire alloués sur le tas (Heap) :</p>
+
+        <div class="diagram" style="font-size: 7.5pt; line-height: 1.05;">
+HEAP (TAS) - DÉTAIL COMPLET DU JEU D'ESSAI C
+═══════════════════════════════════════════════════════════════════════════════════════
+                                       ┌────────────────────────┐
+                                       │        CATALOGUE       │
+                                       │  m_collection ────────┐│
+                                       │  m_nbTrajets = 3      ││
+                                       └───────────────────────┼┘
+                                                               │
+            ┌──────────────────────────────────────────────────▼───────────┐
+   TABLEAU  │   [0] ptr ──┐          [1] ptr ──┐          [2] ptr ──┐      │
+   Trajet** │             │                    │                    │      │
+            └─────────────┼────────────────────┼────────────────────┼──────┘
+                          │                    │                    │
+       ┌──────────────────┘                    │                    └──────────────────┐
+       ▼                                       ▼                                       ▼
+┌──────────────────────┐            ┌──────────────────────┐              ┌──────────────────────┐
+│  TS1 (TrajetSimple)  │            │  TC2 (TrajetCompose) │              │  TS3 (TrajetSimple)  │
+├──────────────────────┤            ├──────────────────────┤              ├──────────────────────┤
+│  vptr ───> vtable    │            │  vptr ───> vtable    │              │  vptr ───> vtable    │
+│  Dep: "Lyon"         │            │  Dep: "Lyon"         │              │  Dep: "Lyon"         │
+│  Arr: "Bordeaux"     │            │  Arr: "Paris"        │              │  Arr: "Paris"        │
+│  Trans: "Train"      │            │  m_nbTrajets: 2      │              │  Trans: "Auto"       │
+└──────────────────────┘            │  m_liste ───────┐    │              └──────────────────────┘
+                                    └─────────────────┼────┘
+                                                      │
+                           ┌──────────────────────────▼────────────┐
+                           │   Tableau TrajetSimple** (m_liste)    │
+                           │    [0] ptr ──┐       [1] ptr ──┐      │
+                           └──────────────┼─────────────────┼──────┘
+                                          │                 │
+                     ┌────────────────────┘                 └────────────────────┐
+                     ▼                                                           ▼
+            ┌──────────────────────┐                                  ┌──────────────────────┐
+            │  TS2-1 (Simple)      │                                  │  TS2-2 (Simple)      │
+            │  Dep: "Lyon"         │                                  │  Dep: "Marseille"    │
+            │  Arr: "Marseille"    │                                  │  Arr: "Paris"        │
+            │  Trans: "Bateau"     │                                  │  Trans: "Avion"      │
+            └──────────────────────┘                                  └──────────────────────┘
+═══════════════════════════════════════════════════════════════════════════════════════</div>
+
+        <h2>C. Problèmes Rencontrés et Améliorations</h2>
+
+        <h3>1. Gestion de la Mémoire</h3>
+        <p><strong>Destructeur Virtuel :</strong> La classe <code>Trajet</code> déclare un destructeur <code>virtual</code>. Sans cela, <code>delete trajet*</code> n'appellerait que le destructeur de base, causant des fuites mémoire.</p>
+        <p><strong>Destruction Profonde :</strong> Le destructeur du <code>Catalogue</code> et de <code>TrajetCompose</code> parcourt le tableau et appelle <code>delete</code> sur chaque élément avant de libérer le tableau.</p>
+
+        <h3>2. Copie Profonde (Deep Copy)</h3>
+        <p>La copie par défaut est superficielle : elle copie les adresses, pas les données. Solution : redéfinir le constructeur de copie pour réallouer et dupliquer toutes les données (<code>strcpy</code>).</p>
+
+        <h3>3. Constante MAP (Débogage)</h3>
+        <p>Traçage via <code>#ifdef MAP ... #endif</code>. Compilation : <code>make CXXFLAGS="-DMAP"</code>. Permet de vérifier que chaque <code>new</code> a son <code>delete</code>.</p>
+
+        <div class="page-number">Page 3 / 4</div>
+    </div>
+
+    <div class="page">
+        <h3>4. Recherche Avancée par DFS (Depth-First Search)</h3>
+        <p>L'algorithme explore récursivement tous les chemins possibles entre deux villes :</p>
+        <div class="diagram" style="font-size:8pt; line-height:1.1;">
+rechercheAvanceRecursive(villeActuelle, villeFinale, chemin[], profondeur, estVisite[]):
+    POUR chaque trajet T du catalogue:
+        SI T.depart == villeActuelle ET T non visité:
+            chemin[profondeur] = T
+            estVisite[T] = true
+            SI T.arrivee == villeFinale:
+                AFFICHER chemin  // Solution trouvée !
+            SINON:
+                rechercheAvanceRecursive(T.arrivee, villeFinale, ...)  // Continuer
+            estVisite[T] = false  // BACKTRACKING : libérer pour autres chemins</div>
+        <p><strong>Complexité :</strong> O(n!) dans le pire cas. Le tableau <code>estVisite[]</code> évite les cycles infinis.</p>
+
+        <h3>5. Axes d'Amélioration</h3>
+        <table style="font-size:9pt;">
+            <tr><th>Problème</th><th>Solution Proposée</th></tr>
+            <tr><td>Gestion manuelle new/delete</td><td>Utiliser <code>std::unique_ptr</code> ou <code>std::shared_ptr</code></td></tr>
+            <tr><td>Tableaux C (<code>Trajet**</code>)</td><td>Remplacer par <code>std::vector&lt;Trajet*&gt;</code></td></tr>
+            <tr><td>Chaînes char*</td><td>Utiliser <code>std::string</code> (copie automatique)</td></tr>
+            <tr><td>DFS sans mémorisation</td><td>Ajouter un cache pour éviter les recalculs</td></tr>
+            <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier</td></tr>
+        </table>
+
+        <h2>Annexe : Manuel d'Utilisation</h2>
+
+        <h3>1. Compilation et Exécution</h3>
+        <p>Le fichier <code>makefile</code> fourni permet de gérer le cycle de vie du projet.</p>
+        <div class="diagram">
+$ make            # Compile et crée l'exécutable 'trajets'
+$ ./trajets       # Lance l'application
+$ make clean      # Supprime les fichiers objets et l'exécutable
+$ make CXXFLAGS="-DMAP"   # Compile avec traces de débogage</div>
+
+        <h3>2. Guide du Menu</h3>
+        <p>L'interface utilisateur en ligne de commande propose les options suivantes :</p>
+        
+        <table>
+            <tr>
+                <th width="15%">Option</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><strong>1</strong></td>
+                <td><strong>Ajout Trajet Simple :</strong> Vous serez invité à saisir la ville de départ, d'arrivée et le moyen de transport.</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td><strong>Ajout Trajet Composé :</strong> Mode interactif. Ajoutez des trajets simples successivement. Le système valide que (Arrivée N = Départ N+1). Tapez '0' pour valider le composé.</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td><strong>Afficher :</strong> Affiche le contenu actuel du catalogue avec un ID pour chaque trajet.</td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td><strong>Recherche Simple :</strong> Affiche les trajets (simples ou composés) qui relient exactement Ville A à Ville B.</td>
+            </tr>
+            <tr>
+                <td><strong>5</strong></td>
+                <td><strong>Recherche Avancée :</strong> (Bonus) Tente de combiner des trajets existants dans le catalogue pour créer un nouvel itinéraire.</td>
+            </tr>
+            <tr>
+                <td><strong>0</strong></td>
+                <td><strong>Quitter :</strong> Appelle les destructeurs et libère toute la mémoire.</td>
+            </tr>
+        </table>
+
+        <div class="page-number">Page 4 / 4 - Fin du document</div>
+    </div>
+
+</body>
+</html>

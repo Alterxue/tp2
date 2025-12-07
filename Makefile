@@ -17,15 +17,15 @@ CXXFLAGS = -ansi -pedantic -Wall -std=c++11
 # ==============================================================================
 
 # Règle principale : cible "trajets" dépend de tous les fichiers objets.
-trajets: main.o Catalogue.o Trajet.o Trajetcompose.o Trajetsimple.o
-	$(CXX) $(CXXFLAGS) -o $(TARGET) main.o Catalogue.o Trajet.o Trajetcompose.o Trajetsimple.o
+trajets: main.o Catalogue.o Trajet.o TrajetCompose.o TrajetSimple.o
+	$(CXX) $(CXXFLAGS) -o $(TARGET) main.o Catalogue.o Trajet.o TrajetCompose.o TrajetSimple.o
 
 # ==============================================================================
 # RÈGLES DE COMPILATION DES OBJETS (*.o)
 # ==============================================================================
 
 # Compilation du fichier main.cpp (qui contient la fonction principale)
-main.o: main.cpp Catalogue.h Trajet.h Trajetcompose.h Trajetsimple.h
+main.o: main.cpp Catalogue.h Trajet.h TrajetCompose.h TrajetSimple.h
 	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
 
 # Compilation des classes (fichiers .cpp dépendent de leurs .h et autres .h)
@@ -37,11 +37,11 @@ Catalogue.o: Catalogue.cpp Catalogue.h Trajet.h
 Trajet.o: Trajet.cpp Trajet.h
 	$(CXX) $(CXXFLAGS) -c Trajet.cpp -o Trajet.o
 
-Trajetcompose.o: Trajetcompose.cpp Trajetcompose.h Trajet.h Trajetsimple.h
-	$(CXX) $(CXXFLAGS) -c Trajetcompose.cpp -o Trajetcompose.o
+TrajetCompose.o: TrajetCompose.cpp TrajetCompose.h Trajet.h TrajetSimple.h
+	$(CXX) $(CXXFLAGS) -c TrajetCompose.cpp -o TrajetCompose.o
 
-Trajetsimple.o: Trajetsimple.cpp Trajetsimple.h Trajet.h
-	$(CXX) $(CXXFLAGS) -c Trajetsimple.cpp -o Trajetsimple.o
+TrajetSimple.o: TrajetSimple.cpp TrajetSimple.h Trajet.h
+	$(CXX) $(CXXFLAGS) -c TrajetSimple.cpp -o TrajetSimple.o
 
 # ==============================================================================
 # NETTOYAGE
