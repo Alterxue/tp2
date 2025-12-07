@@ -30,10 +30,7 @@ void viderBuffer() {
 
 // Lit une chaîne de caractères (avec ou sans espaces)
 void lireChaine(char* buffer) {
-    cin >> buffer; 
-    // Note : Pour simplifier et éviter les problèmes de buffer avec getline
-    // dans cet exercice, on lit un seul mot (pas d'espaces ex: "New-York").
-    // Si vous voulez des espaces, utilisez : cin.getline(buffer, MAX_STRING);
+    cin.getline(buffer, MAX_STRING);
 }
 
 //------------------------------------------------------------------ Main
@@ -80,11 +77,12 @@ int main()
             {
                 cout << ">> AJOUT TRAJET SIMPLE" << endl;
                 cout << "Ville de depart : ";
-                lireChaine(depart);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin.getline(depart, MAX_STRING);
                 cout << "Ville d'arrivee : ";
-                lireChaine(arrivee);
+                cin.getline(arrivee, MAX_STRING);
                 cout << "Moyen de transport : ";
-                lireChaine(transport);
+                cin.getline(transport, MAX_STRING);
 
                 // Création et ajout
                 catalogue.Ajouter(new TrajetSimple(depart, arrivee, transport));
@@ -102,11 +100,12 @@ int main()
                 while (continuer) {
                     cout << "--- Etape " << (nbrEtapes + 1) << " ---" << endl;
                     cout << "Ville de depart : ";
-                    lireChaine(depart);
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cin.getline(depart, MAX_STRING);
                     cout << "Ville d'arrivee : ";
-                    lireChaine(arrivee);
+                    cin.getline(arrivee, MAX_STRING);
                     cout << "Moyen de transport : ";
-                    lireChaine(transport);
+                    cin.getline(transport, MAX_STRING);
 
                     TrajetSimple* ts = new TrajetSimple(depart, arrivee, transport);
                     
@@ -145,9 +144,10 @@ int main()
             {
                 cout << ">> RECHERCHE SIMPLE" << endl;
                 cout << "Ville de depart : ";
-                lireChaine(depart);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin.getline(depart, MAX_STRING);
                 cout << "Ville d'arrivee : ";
-                lireChaine(arrivee);
+                cin.getline(arrivee, MAX_STRING);
                 
                 catalogue.Rechercher(depart, arrivee);
                 break;
@@ -157,9 +157,10 @@ int main()
             {
                 cout << ">> RECHERCHE AVANCEE" << endl;
                 cout << "Ville de depart : ";
-                lireChaine(depart);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin.getline(depart, MAX_STRING);
                 cout << "Ville d'arrivee : ";
-                lireChaine(arrivee);
+                cin.getline(arrivee, MAX_STRING);
 
                 catalogue.RechercherAvance(depart, arrivee);
                 break;

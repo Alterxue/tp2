@@ -24,12 +24,10 @@
 
         .page {
             width: 210mm;
-            height: 297mm; /* Hauteur exacte A4 */
             background: white;
             margin: 10px auto; /* Espace entre les pages à l'écran */
-            padding: 20mm; /* VRAIES MARGES D'IMPRESSION ICI */
+            padding: 20mm; 
             position: relative;
-            overflow: hidden; /* Empêche tout débordement de créer une nouvelle page */
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
@@ -89,10 +87,6 @@
     </style>
 </head>
 <body>
-
-    <div class="no-print" style="background:#ffcccc; padding:10px; text-align:center; color:red; font-weight:bold;">
-        ATTENTION : Lors de l'impression (Ctrl+P), réglez les marges sur "AUCUNE" ou "MINIMUM" !
-    </div>
 
     <div class="page">
         <h1>Rapport TP2 - C++</h1>
@@ -262,38 +256,29 @@ HEAP (TAS) - DÉTAIL COMPLET DU JEU D'ESSAI C
         <p><strong>Destruction Profonde :</strong> Le destructeur du <code>Catalogue</code> et de <code>TrajetCompose</code> parcourt le tableau et appelle <code>delete</code> sur chaque élément avant de libérer le tableau.</p>
 
         <h3>2. Copie Profonde (Deep Copy)</h3>
-        <p>La copie par défaut est superficielle : elle copie les adresses, pas les données. Solution : redéfinir le constructeur de copie pour réallouer et dupliquer toutes les données (<code>strcpy</code>).</p>
+        <p>La copie par défaut est superficielle : elle copie les adresses, pas les données. Nous avons donc redéfini le constructeur de copie et l'opérateur d'affectation pour <code>TrajetSimple</code> (et <code>TrajetCompose</code>) afin de réallouer chaque <code>char*</code> et de recopier les chaînes avec <code>strcpy</code>, en respectant la règle des trois.</p>
 
-        <h3>3. Constante MAP (Débogage)</h3>
-        <p>Traçage via <code>#ifdef MAP ... #endif</code>. Compilation : <code>make CXXFLAGS="-DMAP"</code>. Permet de vérifier que chaque <code>new</code> a son <code>delete</code>.</p>
+        <h3>3. Bug d'Entrée / Affichage</h3>
+        <p>Lors des premiers tests interactifs, l'ajout d'un trajet simple produisait un affichage incohérent comme <code>"lyon en havre vers le"</code>. La cause provenait de la combinaison suivante : lecture des chaînes avec <code>cin &gt;&gt;</code> (qui coupe à l'espace) et risque d'inversion des paramètres lors de l'appel à <code>TrajetSimple(villeDepart, villeArrivee, moyenTransport)</code>. Le correctif implémenté dans <code>main.cpp</code> consiste à utiliser systématiquement <code>getline</code> (avec <code>cin.ignore</code>) pour lire les villes et le moyen de transport, et à appeler explicitement <code>new TrajetSimple(depart, arrivee, transport)</code> dans cet ordre.</p>
+
+        <h3>4. Constante MAP et Valgrind</h3>
+        <p>La constante <code>MAP</code> entoure des messages de trace dans tous les constructeurs/destructeurs. En compilant avec <code>-DMAP</code>, nous avons suivi la création et la destruction de chaque objet, puis vérifié l'absence de fuites mémoire avec <code>valgrind</code> (résultat : "All heap blocks were freed -- no leaks are possible").</p>
 
         <div class="page-number">Page 3 / 4</div>
     </div>
 
     <div class="page">
-        <h3>4. Recherche Avancée par DFS (Depth-First Search)</h3>
-        <p>L'algorithme explore récursivement tous les chemins possibles entre deux villes :</p>
-        <div class="diagram" style="font-size:8pt; line-height:1.1;">
-rechercheAvanceRecursive(villeActuelle, villeFinale, chemin[], profondeur, estVisite[]):
-    POUR chaque trajet T du catalogue:
-        SI T.depart == villeActuelle ET T non visité:
-            chemin[profondeur] = T
-            estVisite[T] = true
-            SI T.arrivee == villeFinale:
-                AFFICHER chemin  // Solution trouvée !
-            SINON:
-                rechercheAvanceRecursive(T.arrivee, villeFinale, ...)  // Continuer
-            estVisite[T] = false  // BACKTRACKING : libérer pour autres chemins</div>
-        <p><strong>Complexité :</strong> O(n!) dans le pire cas. Le tableau <code>estVisite[]</code> évite les cycles infinis.</p>
+        <h3>5. Recherche Avancée par DFS (Depth-First Search)</h3>
+        <p>Une fonctionnalité de recherche avancée a été étudiée sous la forme d'un parcours en profondeur (DFS) dans le catalogue. L'idée est d'explorer récursivement toutes les combinaisons possibles de trajets reliant une ville de départ à une ville d'arrivée, en marquant temporairement les trajets déjà utilisés pour éviter les cycles puis en les dé-marquant lors du retour arrière (backtracking). Cette approche garantit l'exhaustivité mais présente une complexité exponentielle ; elle reste néanmoins adaptée aux tailles de catalogues prévues dans le sujet.</p>
 
-        <h3>5. Axes d'Amélioration</h3>
+        <h3>6. Axes d'Amélioration</h3>
         <table style="font-size:9pt;">
             <tr><th>Problème</th><th>Solution Proposée</th></tr>
-            <tr><td>Gestion manuelle new/delete</td><td>Utiliser <code>std::unique_ptr</code> ou <code>std::shared_ptr</code></td></tr>
-            <tr><td>Tableaux C (<code>Trajet**</code>)</td><td>Remplacer par <code>std::vector&lt;Trajet*&gt;</code></td></tr>
-            <tr><td>Chaînes char*</td><td>Utiliser <code>std::string</code> (copie automatique)</td></tr>
-            <tr><td>DFS sans mémorisation</td><td>Ajouter un cache pour éviter les recalculs</td></tr>
-            <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier</td></tr>
+            <tr><td>Gestion manuelle new/delete</td><td>Utiliser <code>std::unique_ptr</code> ou <code>std::shared_ptr</code> pour fiabiliser la gestion mémoire.</td></tr>
+            <tr><td>Tableaux C (<code>Trajet**</code>)</td><td>Remplacer par <code>std::vector&lt;Trajet*&gt;</code> ou <code>std::vector&lt;std::unique_ptr&lt;Trajet&gt;&gt;</code>.</td></tr>
+            <tr><td>Chaînes char*</td><td>Utiliser <code>std::string</code> pour simplifier la copie et éviter les erreurs de taille.</td></tr>
+            <tr><td>DFS sans mémorisation</td><td>Traiter le DFS comme une version initiale et, en amélioration, ajouter de la mémoïsation ou des heuristiques de coupure pour réduire le nombre de chemins explorés.</td></tr>
+            <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier texte ou binaire pour recharger les trajets.</td></tr>
         </table>
 
         <h2>Annexe : Manuel d'Utilisation</h2>
