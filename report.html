@@ -277,7 +277,8 @@ HEAP (TAS) - DÉTAIL COMPLET DU JEU D'ESSAI C
             <tr><td>Gestion manuelle new/delete</td><td>Utiliser <code>std::unique_ptr</code> ou <code>std::shared_ptr</code> pour fiabiliser la gestion mémoire.</td></tr>
             <tr><td>Tableaux C (<code>Trajet**</code>)</td><td>Remplacer par <code>std::vector&lt;Trajet*&gt;</code> ou <code>std::vector&lt;std::unique_ptr&lt;Trajet&gt;&gt;</code>.</td></tr>
             <tr><td>Chaînes char*</td><td>Utiliser <code>std::string</code> pour simplifier la copie et éviter les erreurs de taille.</td></tr>
-            <tr><td>DFS sans mémorisation</td><td>Traiter le DFS comme une version initiale et, en amélioration, ajouter de la mémoïsation ou des heuristiques de coupure pour réduire le nombre de chemins explorés.</td></tr>
+            <tr><td>DFS sans mémorisation</td><td>Ajouter un cache/mémoïsation pour stocker les impasses, utiliser un tableau ou un ensemble de villes visitées plutôt que des trajets, 
+                et pré-filtrer les trajets par ville pour réduire le nombre de boucles et améliorer les performances.</td></tr>
             <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier texte ou binaire pour recharger les trajets.</td></tr>
         </table>
 

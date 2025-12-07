@@ -135,41 +135,41 @@ Catalogue::~Catalogue ( )
 
 //----------------------------------------------------- Méthodes protégées
 
-void Catalogue::rechercheAvanceRecursive(const char* villeActuelle, const char* villeFinale, Trajet** chemin, int profondeur, bool* estVisite)
-{
-    // Parcourt tous les trajets du catalogue pour trouver ceux qui partent de la villeActuelle
-    for (unsigned int i = 0; i < m_nbTrajets; ++i)
+    void Catalogue::rechercheAvanceRecursive(const char* villeActuelle, const char* villeFinale, Trajet** chemin, int profondeur, bool* estVisite)
     {
-        // Si le trajet n'a pas déjà été utilisé dans ce chemin (évite les cycles)
-        // ET si le départ du trajet correspond à notre position actuelle
-        if (!estVisite[i] && strcmp(m_collectionTrajets[i]->GetVilleDepart(), villeActuelle) == 0)
+        // Parcourt tous les trajets du catalogue pour trouver ceux qui partent de la villeActuelle
+        for (unsigned int i = 0; i < m_nbTrajets; ++i)
         {
-            // On ajoute ce trajet au chemin temporaire
-            chemin[profondeur] = m_collectionTrajets[i];
-            estVisite[i] = true;
-
-            // CAS 1 : C'est la destination finale !
-            if (strcmp(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale) == 0)
+            // Si le trajet n'a pas déjà été utilisé dans ce chemin (évite les cycles)
+            // ET si le départ du trajet correspond à notre position actuelle
+            if (!estVisite[i] && strcmp(m_collectionTrajets[i]->GetVilleDepart(), villeActuelle) == 0)
             {
-                // On affiche la solution complète trouvée
-                cout << "Solution trouvee :" << endl;
-                for (int j = 0; j <= profondeur; ++j)
+                // On ajoute ce trajet au chemin temporaire
+                chemin[profondeur] = m_collectionTrajets[i];
+                estVisite[i] = true;
+
+                // CAS 1 : C'est la destination finale !
+                if (strcmp(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale) == 0)
                 {
-                    cout << "   " << (j+1) << ". ";
-                    chemin[j]->Afficher();
-                    cout << endl;
+                    // On affiche la solution complète trouvée
+                    cout << "Solution trouvee :" << endl;
+                    for (int j = 0; j <= profondeur; ++j)
+                    {
+                        cout << "   " << (j+1) << ". ";
+                        chemin[j]->Afficher();
+                        cout << endl;
+                    }
+                    cout << "-----------------------" << endl;
                 }
-                cout << "-----------------------" << endl;
-            }
-            // CAS 2 : Ce n'est pas la fin, on continue de chercher à partir de la ville d'arrivée de ce trajet
-            else
-            {
-                rechercheAvanceRecursive(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale, chemin, profondeur + 1, estVisite);
-            }
+                // CAS 2 : Ce n'est pas la fin, on continue de chercher à partir de la ville d'arrivée de ce trajet
+                else
+                {
+                    rechercheAvanceRecursive(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale, chemin, profondeur + 1, estVisite);
+                }
 
-            // Backtracking : on marque le trajet comme non visité pour permettre 
-            // son utilisation dans d'autres combinaisons potentielles
-            estVisite[i] = false;
+                // Backtracking : on marque le trajet comme non visité pour permettre 
+                // son utilisation dans d'autres combinaisons potentielles
+                estVisite[i] = false;
+            }
         }
     }
-}
