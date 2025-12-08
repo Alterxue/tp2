@@ -259,15 +259,12 @@ HEAP (TAS) - DÉTAIL COMPLET DU JEU D'ESSAI C
         <p>La copie par défaut est superficielle : elle copie les adresses, pas les données. Nous avons donc redéfini le constructeur de copie et l'opérateur d'affectation pour <code>TrajetSimple</code> (et <code>TrajetCompose</code>) afin de réallouer chaque <code>char*</code> et de recopier les chaînes avec <code>strcpy</code>, en respectant la règle des trois.</p>
 
         <h3>3. Bug d'Entrée / Affichage</h3>
-        <p>Lors des premiers tests interactifs, l'ajout d'un trajet simple produisait un affichage incohérent comme <code>"lyon en havre vers le"</code>. La cause provenait de la combinaison suivante : lecture des chaînes avec <code>cin &gt;&gt;</code> (qui coupe à l'espace) et risque d'inversion des paramètres lors de l'appel à <code>TrajetSimple(villeDepart, villeArrivee, moyenTransport)</code>. Le correctif implémenté dans <code>main.cpp</code> consiste à utiliser systématiquement <code>getline</code> (avec <code>cin.ignore</code>) pour lire les villes et le moyen de transport, et à appeler explicitement <code>new TrajetSimple(depart, arrivee, transport)</code> dans cet ordre.</p>
+        <p>Lors des premiers tests, l'ajout d'un trajet simple produisait un affichage incohérent comme <code>"lyon en havre vers le"</code>. La cause provenait d'une inversion des paramètres lors de l'appel <code>TrajetSimple(villeDepart, villeArrivee, moyenTransport)</code>. Le correctif a consisté à vérifier l'ordre des arguments.</p>
+        <p><strong>Limitation due au cahier des charges :</strong> Le consigne interdit l'utilisation de <code>getline</code>, nous obligeant à utiliser <code>cin &gt;&gt;</code> qui coupe la saisie à l'espace. Par conséquent, les villes à plusieurs mots (ex: "Le Havre") doivent être saisies avec un underscore : <code>Le_Havre</code>. Une amélioration future serait d'autoriser <code>getline</code> pour une saisie plus naturelle.</p>
 
         <h3>4. Constante MAP et Valgrind</h3>
         <p>La constante <code>MAP</code> entoure des messages de trace dans tous les constructeurs/destructeurs. En compilant avec <code>-DMAP</code>, nous avons suivi la création et la destruction de chaque objet, puis vérifié l'absence de fuites mémoire avec <code>valgrind</code> (résultat : "All heap blocks were freed -- no leaks are possible").</p>
 
-        <div class="page-number">Page 3 / 4</div>
-    </div>
-
-    <div class="page">
         <h3>5. Recherche Avancée par DFS (Depth-First Search)</h3>
         <p>Une fonctionnalité de recherche avancée a été étudiée sous la forme d'un parcours en profondeur (DFS) dans le catalogue. L'idée est d'explorer récursivement toutes les combinaisons possibles de trajets reliant une ville de départ à une ville d'arrivée, en marquant temporairement les trajets déjà utilisés pour éviter les cycles puis en les dé-marquant lors du retour arrière (backtracking). Cette approche garantit l'exhaustivité mais présente une complexité exponentielle ; elle reste néanmoins adaptée aux tailles de catalogues prévues dans le sujet.</p>
 
@@ -277,9 +274,9 @@ HEAP (TAS) - DÉTAIL COMPLET DU JEU D'ESSAI C
             <tr><td>Gestion manuelle new/delete</td><td>Utiliser <code>std::unique_ptr</code> ou <code>std::shared_ptr</code> pour fiabiliser la gestion mémoire.</td></tr>
             <tr><td>Tableaux C (<code>Trajet**</code>)</td><td>Remplacer par <code>std::vector&lt;Trajet*&gt;</code> ou <code>std::vector&lt;std::unique_ptr&lt;Trajet&gt;&gt;</code>.</td></tr>
             <tr><td>Chaînes char*</td><td>Utiliser <code>std::string</code> pour simplifier la copie et éviter les erreurs de taille.</td></tr>
-            <tr><td>DFS sans mémorisation</td><td>Ajouter un cache/mémoïsation pour stocker les impasses, utiliser un tableau ou un ensemble de villes visitées plutôt que des trajets, 
-                et pré-filtrer les trajets par ville pour réduire le nombre de boucles et améliorer les performances.</td></tr>
-            <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier texte ou binaire pour recharger les trajets.</td></tr>
+            <tr><td>Saisie avec <code>cin &gt;&gt;</code></td><td>Le consigne interdit <code>getline</code>, donc les villes multi-mots nécessitent <code>_</code>. Avec <code>getline</code>, on pourrait saisir "Le Havre" directement.</td></tr>
+            <tr><td>DFS sans mémorisation</td><td>Ajouter un cache/mémoïsation, pré-filtrer les trajets par ville, ou utiliser Dijkstra/A* pour les chemins optimaux.</td></tr>
+            <tr><td>Pas de persistance</td><td>Sérialiser le catalogue dans un fichier texte ou binaire pour sauvegarder/recharger les trajets.</td></tr>
         </table>
 
         <h2>Annexe : Manuel d'Utilisation</h2>

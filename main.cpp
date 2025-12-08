@@ -8,7 +8,6 @@
 //-------------------------------------------------------- Include système
 #include <iostream>
 #include <cstring>
-#include <limits> // Pour vide le buffer cin
 
 using namespace std;
 
@@ -20,18 +19,6 @@ using namespace std;
 
 //------------------------------------------------------------- Constantes
 const int MAX_STRING = 100; // Taille max pour les noms de villes/transports
-
-//------------------------------------------------------------- Fonctions Utilitaires
-// Vide le buffer d'entrée pour éviter les bugs si l'utilisateur tape n'importe quoi
-void viderBuffer() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
-
-// Lit une chaîne de caractères (avec ou sans espaces)
-void lireChaine(char* buffer) {
-    cin.getline(buffer, MAX_STRING);
-}
 
 //------------------------------------------------------------------ Main
 
@@ -45,6 +32,9 @@ int main()
 
     cout << "=======================================================" << endl;
     cout << "      GESTIONNAIRE DE TRAJETS (Mode Interactif)" << endl;
+    cout << "=======================================================" << endl;
+    cout << "Note: Pour les villes a plusieurs mots, utilisez '_'" << endl;
+    cout << "      Exemple: Le_Havre, New_York, Saint_Etienne" << endl;
     cout << "=======================================================" << endl;
 
     while (choix != 0)
@@ -64,8 +54,9 @@ int main()
         // Si l'entrée n'est pas un nombre
         if(cin.fail()) {
             cout << "Erreur : Veuillez entrer un nombre." << endl;
-            viderBuffer();
-            choix = -1; // Force le redémarrage de la boucle
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choix = -1;
             continue;
         }
 
@@ -77,12 +68,11 @@ int main()
             {
                 cout << ">> AJOUT TRAJET SIMPLE" << endl;
                 cout << "Ville de depart : ";
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cin.getline(depart, MAX_STRING);
+                cin >> depart;
                 cout << "Ville d'arrivee : ";
-                cin.getline(arrivee, MAX_STRING);
+                cin >> arrivee;
                 cout << "Moyen de transport : ";
-                cin.getline(transport, MAX_STRING);
+                cin >> transport;
 
                 // Création et ajout
                 catalogue.Ajouter(new TrajetSimple(depart, arrivee, transport));
@@ -100,12 +90,11 @@ int main()
                 while (continuer) {
                     cout << "--- Etape " << (nbrEtapes + 1) << " ---" << endl;
                     cout << "Ville de depart : ";
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cin.getline(depart, MAX_STRING);
+                    cin >> depart;
                     cout << "Ville d'arrivee : ";
-                    cin.getline(arrivee, MAX_STRING);
+                    cin >> arrivee;
                     cout << "Moyen de transport : ";
-                    cin.getline(transport, MAX_STRING);
+                    cin >> transport;
 
                     TrajetSimple* ts = new TrajetSimple(depart, arrivee, transport);
                     
@@ -144,10 +133,9 @@ int main()
             {
                 cout << ">> RECHERCHE SIMPLE" << endl;
                 cout << "Ville de depart : ";
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cin.getline(depart, MAX_STRING);
+                cin >> depart;
                 cout << "Ville d'arrivee : ";
-                cin.getline(arrivee, MAX_STRING);
+                cin >> arrivee;
                 
                 catalogue.Rechercher(depart, arrivee);
                 break;
@@ -157,10 +145,9 @@ int main()
             {
                 cout << ">> RECHERCHE AVANCEE" << endl;
                 cout << "Ville de depart : ";
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cin.getline(depart, MAX_STRING);
+                cin >> depart;
                 cout << "Ville d'arrivee : ";
-                cin.getline(arrivee, MAX_STRING);
+                cin >> arrivee;
 
                 catalogue.RechercherAvance(depart, arrivee);
                 break;
