@@ -1,12 +1,12 @@
 /*************************************************************************
-                           Xxx  -  description
+                           Trajet  -  Classe abstraite pour les trajets
                              -------------------
     début                : $DATE$
     copyright            : (C) $YEAR$ par $AUTHOR$
     e-mail               : $EMAIL$
 *************************************************************************/
 
-//---------- Réalisation de la classe <Xxx> (fichier Xxx.cpp) ------------
+//---------- Réalisation de la classe <Trajet> (fichier Trajet.cpp) ------
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -21,12 +21,6 @@ using namespace std;
 
 //----------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
-// type Xxx::Méthode ( liste des paramètres )
-// Algorithme :
-//
-//{
-//} //----- Fin de Méthode
 
 //-------------------------------------------- Constructeurs - destructeur
 Trajet::Trajet (const char* depart, const char* arrivee)

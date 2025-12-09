@@ -1,12 +1,12 @@
 /*************************************************************************
-                           Ensemble  -  description
+                           Trajet  -  Classe abstraite représentant un trajet
                              -------------------
     début                : $DATE$
     copyright            : (C) $YEAR$ par $AUTHOR$
     e-mail               : $EMAIL$
 *************************************************************************/
 
-//---------- Interface de la classe <Ensemble> (fichier Ensemble.h) ----------------
+//---------- Interface de la classe <Trajet> (fichier Trajet.h) ----------------
 #ifndef TRAJET_H
 
 #define TRAJET_H
@@ -19,9 +19,10 @@
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
-// Rôle de la classe <Ensemble>
-//
-//
+// Rôle de la classe <Trajet>
+// Classe abstraite servant de base pour la hiérarchie des trajets.
+// Définit l'interface commune pour TrajetSimple et TrajetCompose.
+// Gère les attributs communs : ville de départ et ville d'arrivée.
 //------------------------------------------------------------------------
 
 class Trajet
@@ -101,7 +102,7 @@ protected:
 
 };
 
-//-------------------------------- Autres définitions dépendantes de <Ensemble>
+//-------------------------------- Autres définitions dépendantes de <Trajet>
 
 #endif // TRAJET_H
 
