@@ -121,6 +121,7 @@ void Catalogue::Sauvegarder(const char* nomFichier, int mode, const char* villeD
     }
     int debut = (n >= 0) ? n : 0;
     int fin = (m >= 0) ? m : m_nbTrajets - 1;
+    int nbSauvegardes = 0;  //enregistrer combien de trajets qu on a ajoute
     for (int i = debut; i <= fin && i < (int)m_nbTrajets; ++i)
     {
         const Trajet* t = m_collectionTrajets[i];
@@ -132,8 +133,13 @@ void Catalogue::Sauvegarder(const char* nomFichier, int mode, const char* villeD
             if (villeArr && strcmp(t->GetVilleArrivee(), villeArr) != 0) continue;
         }
         t->Sauvegarder(ofs);
+        ++nbSauvegardes;
     }
     ofs.close();
+    if (nbSauvegardes == 0)
+    {
+        std::cout << "Aucun trajet ne correspond aux critères de sauvegarde." << std::endl;
+    }
 }
 
 // Charge des trajets depuis un fichier et les ajoute au catalogue
@@ -146,6 +152,7 @@ void Catalogue::Charger(const char* nomFichier, int mode, const char* villeDep, 
         return;
     }
     int index = 0;
+    int nbCharges = 0;
     while (!ifs.eof())
     {
         std::streampos pos = ifs.tellg();
@@ -153,24 +160,32 @@ void Catalogue::Charger(const char* nomFichier, int mode, const char* villeDep, 
         std::getline(ifs, type, ';');
         if (type == "SIMPLE")
         {
+            if (mode == 2) { ifs.ignore(4096, '\n'); continue; }  //ignorer le reste de cette ligne
             ifs.seekg(pos);
             TrajetSimple* ts = TrajetSimple::Charger(ifs);
             if (!ts) break;
-            if (mode == 1 && villeDep && strcmp(ts->GetVilleDepart(), villeDep) != 0) { delete ts; continue; }
-            if (mode == 2 && villeArr && strcmp(ts->GetVilleArrivee(), villeArr) != 0) { delete ts; continue; }
+            if (mode == 3) {
+                if (villeDep && strcmp(ts->GetVilleDepart(), villeDep) != 0) { delete ts; continue; }
+                if (villeArr && strcmp(ts->GetVilleArrivee(), villeArr) != 0) { delete ts; continue; }
+            }
             if (mode == 4 && (index < n || index > m)) { delete ts; ++index; continue; }
             Ajouter(ts);
+            ++nbCharges;
             ++index;
         }
         else if (type == "COMPOSE")
         {
+            if (mode == 1) { ifs.ignore(4096, '\n'); continue; }
             ifs.seekg(pos);
             TrajetCompose* tc = TrajetCompose::Charger(ifs);
             if (!tc) break;
-            if (mode == 1 && villeDep && strcmp(tc->GetVilleDepart(), villeDep) != 0) { delete tc; continue; }
-            if (mode == 2 && villeArr && strcmp(tc->GetVilleArrivee(), villeArr) != 0) { delete tc; continue; }
+            if (mode == 3) {
+                if (villeDep && strcmp(tc->GetVilleDepart(), villeDep) != 0) { delete tc; continue; }
+                if (villeArr && strcmp(tc->GetVilleArrivee(), villeArr) != 0) { delete tc; continue; }
+            }
             if (mode == 4 && (index < n || index > m)) { delete tc; ++index; continue; }
             Ajouter(tc);
+            ++nbCharges;
             ++index;
         }
         else
@@ -179,6 +194,10 @@ void Catalogue::Charger(const char* nomFichier, int mode, const char* villeDep, 
         }
     }
     ifs.close();
+    if (nbCharges == 0)
+    {
+        std::cout << "Aucun trajet ne correspond aux critères de chargement." << std::endl;
+    }
 }
 
 //-------------------------------------------- Constructeurs - destructeur
@@ -206,41 +225,41 @@ Catalogue::~Catalogue ( )
 
 //----------------------------------------------------- Méthodes protégées
 
-    void Catalogue::rechercheAvanceRecursive(const char* villeActuelle, const char* villeFinale, Trajet** chemin, int profondeur, bool* estVisite)
+void Catalogue::rechercheAvanceRecursive(const char* villeActuelle, const char* villeFinale, Trajet** chemin, int profondeur, bool* estVisite)
+{
+    // Parcourt tous les trajets du catalogue pour trouver ceux qui partent de la villeActuelle
+    for (unsigned int i = 0; i < m_nbTrajets; ++i)
     {
-        // Parcourt tous les trajets du catalogue pour trouver ceux qui partent de la villeActuelle
-        for (unsigned int i = 0; i < m_nbTrajets; ++i)
+        // Si le trajet n'a pas déjà été utilisé dans ce chemin (évite les cycles)
+        // ET si le départ du trajet correspond à notre position actuelle
+        if (!estVisite[i] && strcmp(m_collectionTrajets[i]->GetVilleDepart(), villeActuelle) == 0)
         {
-            // Si le trajet n'a pas déjà été utilisé dans ce chemin (évite les cycles)
-            // ET si le départ du trajet correspond à notre position actuelle
-            if (!estVisite[i] && strcmp(m_collectionTrajets[i]->GetVilleDepart(), villeActuelle) == 0)
+            // On ajoute ce trajet au chemin temporaire
+            chemin[profondeur] = m_collectionTrajets[i];
+            estVisite[i] = true;
+
+            // CAS 1 : C'est la destination finale !
+            if (strcmp(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale) == 0)
             {
-                // On ajoute ce trajet au chemin temporaire
-                chemin[profondeur] = m_collectionTrajets[i];
-                estVisite[i] = true;
-
-                // CAS 1 : C'est la destination finale !
-                if (strcmp(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale) == 0)
+                // On affiche la solution complète trouvée
+                cout << "Solution trouvee :" << endl;
+                for (int j = 0; j <= profondeur; ++j)
                 {
-                    // On affiche la solution complète trouvée
-                    cout << "Solution trouvee :" << endl;
-                    for (int j = 0; j <= profondeur; ++j)
-                    {
-                        cout << "   " << (j+1) << ". ";
-                        chemin[j]->Afficher();
-                        cout << endl;
-                    }
-                    cout << "-----------------------" << endl;
+                    cout << "   " << (j+1) << ". ";
+                    chemin[j]->Afficher();
+                    cout << endl;
                 }
-                // CAS 2 : Ce n'est pas la fin, on continue de chercher à partir de la ville d'arrivée de ce trajet
-                else
-                {
-                    rechercheAvanceRecursive(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale, chemin, profondeur + 1, estVisite);
-                }
-
-                // Backtracking : on marque le trajet comme non visité pour permettre 
-                // son utilisation dans d'autres combinaisons potentielles
-                estVisite[i] = false;
+                cout << "-----------------------" << endl;
             }
+            // CAS 2 : Ce n'est pas la fin, on continue de chercher à partir de la ville d'arrivée de ce trajet
+            else
+            {
+                rechercheAvanceRecursive(m_collectionTrajets[i]->GetVilleArrivee(), villeFinale, chemin, profondeur + 1, estVisite);
+            }
+
+            // Backtracking : on marque le trajet comme non visité pour permettre 
+            // son utilisation dans d'autres combinaisons potentielles
+            estVisite[i] = false;
         }
     }
+}

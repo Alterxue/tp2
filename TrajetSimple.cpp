@@ -132,5 +132,5 @@ TrajetSimple* TrajetSimple::Charger(std::istream & is)
     std::string villeDep = ligne.substr(pos1+1, pos2-pos1-1);
     std::string villeArr = ligne.substr(pos2+1, pos3-pos2-1);
     std::string moyen = ligne.substr(pos3+1);
-    return new TrajetSimple(villeDep.c_str(), villeArr.c_str(), moyen.c_str());
+    return new TrajetSimple(villeDep.c_str(), villeArr.c_str(), moyen.c_str()); //construire un new trajet simple et return it
 }

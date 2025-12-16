@@ -1,1 +1,3 @@
-SIMPLE;lyon;paris;train
+COMPOSE;2
+SIMPLE;lyon;ii;bus
+SIMPLE;ii;o;tram
