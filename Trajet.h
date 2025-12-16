@@ -65,6 +65,21 @@ class Trajet
     // Ne modifie pas l'état de l'objet (const).
     // Doit renvoyer la ville d'arrivée du dernier segment pour un TrajetCompose.
 
+    // Méthode virtuelle pure pour la sauvegarde d'un trajet dans un flux de sortie (fichier)
+    // Mode d'emploi :
+    // Permet d'écrire les informations du trajet dans un flux (ofstream, etc.)
+    // Contrat :
+    // Doit être redéfinie dans chaque classe dérivée pour respecter le format de sauvegarde.
+    virtual void Sauvegarder(std::ostream & os) const = 0;
+
+    // Méthode statique pour charger un trajet depuis un flux (à spécialiser dans les classes filles)
+    // Mode d'emploi :
+    // Lit un trajet depuis un flux et retourne un pointeur vers un nouvel objet Trajet (simple ou composé)
+    // Contrat :
+    // Le flux doit être positionné au début d'un trajet valide.
+    // Retourne nullptr si la lecture échoue ou si le format est incorrect.
+    static Trajet* Charger(std::istream & is);
+
 //-------------------------------------------- Constructeurs - destructeur
     
     Trajet( const char* m_villeDepart, const char* m_villeArrivee );

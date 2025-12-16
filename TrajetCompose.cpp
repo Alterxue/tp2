@@ -114,6 +114,37 @@ void TrajetCompose::AjouterTrajet(TrajetSimple* unTrajet)
 
 } //----- Fin de AjouterTrajet
 
+void TrajetCompose::Sauvegarder(std::ostream & os) const
+// Méthode de sauvegarde d'un trajet composé dans un flux de sortie (fichier)
+// Format exemple : COMPOSE;nbSousTrajets\n[sous-trajets...]
+{
+    os << "COMPOSE;" << m_nbTrajets << std::endl;
+    for (unsigned int i = 0; i < m_nbTrajets; ++i)
+    {
+        m_collectionTrajets[i]->Sauvegarder(os);
+    }
+}
+
+TrajetCompose* TrajetCompose::Charger(std::istream & is)
+// Méthode statique pour charger un trajet composé depuis un flux
+// Retourne un pointeur vers un nouvel objet TrajetCompose ou nullptr si erreur
+{
+    std::string ligne;
+    if (!std::getline(is, ligne)) return nullptr;
+    if (ligne.find("COMPOSE;") != 0) return nullptr;
+    size_t pos = ligne.find(';');
+    if (pos == std::string::npos) return nullptr;
+    int nb = std::stoi(ligne.substr(pos+1));
+    if (nb <= 0) return nullptr;
+    TrajetCompose* tc = new TrajetCompose();
+    for (int i = 0; i < nb; ++i)
+    {
+        TrajetSimple* ts = TrajetSimple::Charger(is);
+        if (!ts) { delete tc; return nullptr; }
+        tc->AjouterTrajet(ts);
+    }
+    return tc;
+}
 
 //------------------------------------------------- Surcharge d'opérateurs
 TrajetCompose & TrajetCompose::operator = ( const TrajetCompose & unTrajetCompose )

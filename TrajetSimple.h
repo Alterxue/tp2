@@ -55,8 +55,20 @@ public:
     // Ne modifie pas l'objet (const).
     virtual const char * GetVilleArrivee() const;
 
-    
+    // Méthode de sauvegarde d'un trajet simple dans un flux de sortie (fichier)
+    // Mode d'emploi :
+    // Écrit les informations du trajet simple dans un flux (ofstream, etc.)
+    // Contrat :
+    // Redéfinit la méthode virtuelle pure de la classe mère Trajet.
+    virtual void Sauvegarder(std::ostream & os) const override;
 
+    // Méthode statique pour charger un trajet simple depuis un flux
+    // Mode d'emploi :
+    // Lit un trajet simple depuis un flux et retourne un pointeur vers un nouvel objet TrajetSimple
+    // Contrat :
+    // Le flux doit être positionné au début d'un trajet simple valide.
+    // Retourne nullptr si la lecture échoue ou si le format est incorrect.
+    static TrajetSimple* Charger(std::istream & is);
 
 //-------------------------------------------- Constructeurs - destructeur
     TrajetSimple ( const char* villeDepart, const char* villeArrivee, const char* moyenTransport );

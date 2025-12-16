@@ -12,6 +12,8 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include "Trajet.h"
+#include "TrajetSimple.h"
+#include "TrajetCompose.h"
 
 //------------------------------------------------------------- Constantes
 const int CAPACITE_INITIALE = 10;
@@ -68,6 +70,20 @@ public:
     // Contrat :
     // Les chaînes de caractères ne doivent pas être NULL.
     void RechercherAvance(const char* depart, const char* arrivee);
+
+    // Sauvegarde le catalogue dans un fichier
+    // Mode d'emploi :
+    // Permet de sauvegarder tout ou partie du catalogue dans un fichier, selon différents critères (type, ville, intervalle)
+    // Contrat :
+    // Le nom du fichier doit être valide. Les critères sont optionnels.
+    void Sauvegarder(const char* nomFichier, int mode = 0, const char* villeDep = nullptr, const char* villeArr = nullptr, int n = -1, int m = -1) const;
+
+    // Charge des trajets depuis un fichier et les ajoute au catalogue
+    // Mode d'emploi :
+    // Permet de charger tout ou partie d'un fichier de trajets dans le catalogue courant, selon différents critères (type, ville, intervalle)
+    // Contrat :
+    // Le nom du fichier doit être valide. Les critères sont optionnels.
+    void Charger(const char* nomFichier, int mode = 0, const char* villeDep = nullptr, const char* villeArr = nullptr, int n = -1, int m = -1);
 
 //-------------------------------------------- Constructeurs - destructeur
 

@@ -45,6 +45,8 @@ int main()
         cout << "3. Afficher le Catalogue" << endl;
         cout << "4. Recherche Simple (Trajet direct)" << endl;
         cout << "5. Recherche Avancee (Combinaison)" << endl;
+        cout << "6. Sauvegarder le Catalogue dans un fichier" << endl;
+        cout << "7. Charger des trajets depuis un fichier" << endl;
         cout << "0. Quitter" << endl;
         cout << "--------------------------------------" << endl;
         cout << "Votre choix : ";
@@ -150,6 +152,56 @@ int main()
                 cin >> arrivee;
 
                 catalogue.RechercherAvance(depart, arrivee);
+                break;
+            }
+
+            case 6: // Sauvegarder le catalogue
+            {
+                cout << ">> SAUVEGARDE DU CATALOGUE" << endl;
+                char nomFichier[MAX_STRING];
+                cout << "Nom du fichier de sauvegarde : ";
+                cin >> nomFichier;
+                cout << "Mode de sauvegarde (0: tout, 1: simples, 2: composes, 3: par ville, 4: intervalle) : ";
+                int mode; cin >> mode;
+                char villeDep[MAX_STRING] = "", villeArr[MAX_STRING] = "";
+                int n = -1, m = -1;
+                if (mode == 3) {
+                    cout << "Ville de depart (ou - pour ignorer) : "; cin >> villeDep;
+                    cout << "Ville d'arrivee (ou - pour ignorer) : "; cin >> villeArr;
+                    catalogue.Sauvegarder(nomFichier, mode, strcmp(villeDep,"-")==0?nullptr:villeDep, strcmp(villeArr,"-")==0?nullptr:villeArr);
+                } else if (mode == 4) {
+                    cout << "Indice debut (0-base) : "; cin >> n;
+                    cout << "Indice fin (0-base) : "; cin >> m;
+                    catalogue.Sauvegarder(nomFichier, mode, nullptr, nullptr, n, m);
+                } else {
+                    catalogue.Sauvegarder(nomFichier, mode);
+                }
+                cout << "Catalogue sauvegarde dans " << nomFichier << endl;
+                break;
+            }
+
+            case 7: // Charger des trajets
+            {
+                cout << ">> CHARGEMENT DE TRAJETS" << endl;
+                char nomFichier[MAX_STRING];
+                cout << "Nom du fichier a charger : ";
+                cin >> nomFichier;
+                cout << "Mode de chargement (0: tout, 1: simples, 2: composes, 3: par ville, 4: intervalle) : ";
+                int mode; cin >> mode;
+                char villeDep[MAX_STRING] = "", villeArr[MAX_STRING] = "";
+                int n = -1, m = -1;
+                if (mode == 3) {
+                    cout << "Ville de depart (ou - pour ignorer) : "; cin >> villeDep;
+                    cout << "Ville d'arrivee (ou - pour ignorer) : "; cin >> villeArr;
+                    catalogue.Charger(nomFichier, mode, strcmp(villeDep,"-")==0?nullptr:villeDep, strcmp(villeArr,"-")==0?nullptr:villeArr);
+                } else if (mode == 4) {
+                    cout << "Indice debut (0-base) : "; cin >> n;
+                    cout << "Indice fin (0-base) : "; cin >> m;
+                    catalogue.Charger(nomFichier, mode, nullptr, nullptr, n, m);
+                } else {
+                    catalogue.Charger(nomFichier, mode);
+                }
+                cout << "Chargement termine depuis " << nomFichier << endl;
                 break;
             }
 

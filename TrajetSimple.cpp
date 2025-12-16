@@ -110,3 +110,27 @@ void TrajetSimple::Afficher() const {
     // Pour un TrajetSimple, on affiche VilleDepart -> VilleArrivee en MoyenTransport
     cout << m_villeDepart << " en " << m_moyenTransport << " vers " << m_villeArrivee;
 } //----- Fin de Afficher
+
+// Méthode de sauvegarde d'un trajet simple dans un flux de sortie (fichier)
+// Format exemple : SIMPLE;villeDepart;villeArrivee;moyenTransport
+void TrajetSimple::Sauvegarder(std::ostream & os) const
+{
+    os << "SIMPLE;" << m_villeDepart << ";" << m_villeArrivee << ";" << m_moyenTransport << std::endl;
+}
+
+// Méthode statique pour charger un trajet simple depuis un flux
+// Retourne un pointeur vers un nouvel objet TrajetSimple ou nullptr si erreur
+TrajetSimple* TrajetSimple::Charger(std::istream & is)
+{
+    std::string ligne;
+    if (!std::getline(is, ligne)) return nullptr;
+    if (ligne.find("SIMPLE;") != 0) return nullptr;
+    size_t pos1 = ligne.find(';');
+    size_t pos2 = ligne.find(';', pos1+1);
+    size_t pos3 = ligne.find(';', pos2+1);
+    if (pos1 == std::string::npos || pos2 == std::string::npos || pos3 == std::string::npos) return nullptr;
+    std::string villeDep = ligne.substr(pos1+1, pos2-pos1-1);
+    std::string villeArr = ligne.substr(pos2+1, pos3-pos2-1);
+    std::string moyen = ligne.substr(pos3+1);
+    return new TrajetSimple(villeDep.c_str(), villeArr.c_str(), moyen.c_str());
+}

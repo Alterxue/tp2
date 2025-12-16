@@ -68,6 +68,20 @@ public:
     // La ville de départ du nouveau trajet doit être l'arrivée du précédent.
     void AjouterTrajet(TrajetSimple* unTrajet);
 
+    // Méthode de sauvegarde d'un trajet composé dans un flux de sortie (fichier)
+    // Mode d'emploi :
+    // Écrit les informations du trajet composé et de ses sous-trajets dans un flux (ofstream, etc.)
+    // Contrat :
+    // Redéfinit la méthode virtuelle pure de la classe mère Trajet.
+    virtual void Sauvegarder(std::ostream & os) const override;
+
+    // Méthode statique pour charger un trajet composé depuis un flux
+    // Mode d'emploi :
+    // Lit un trajet composé depuis un flux et retourne un pointeur vers un nouvel objet TrajetCompose
+    // Contrat :
+    // Le flux doit être positionné au début d'un trajet composé valide.
+    // Retourne nullptr si la lecture échoue ou si le format est incorrect.
+    static TrajetCompose* Charger(std::istream & is);
 
 //------------------------------------------------- Surcharge d'opérateurs
     TrajetCompose & operator = ( const TrajetCompose & unTrajetCompose );

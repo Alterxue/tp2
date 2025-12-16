@@ -13,6 +13,7 @@
 //-------------------------------------------------------- Include système
 #include <iostream>
 #include <cstring>
+#include <fstream>
 using namespace std;
 
 //------------------------------------------------------ Include personnel
@@ -109,6 +110,76 @@ void Catalogue::RechercherAvance(const char* depart, const char* arrivee)
     delete[] estVisite;
 } //----- Fin de RechercherAvance
 
+// Sauvegarde le catalogue dans un fichier selon différents critères
+void Catalogue::Sauvegarder(const char* nomFichier, int mode, const char* villeDep, const char* villeArr, int n, int m) const
+{
+    std::ofstream ofs(nomFichier);
+    if (!ofs)
+    {
+        std::cout << "Erreur d'ouverture du fichier en écriture !" << std::endl;
+        return;
+    }
+    int debut = (n >= 0) ? n : 0;
+    int fin = (m >= 0) ? m : m_nbTrajets - 1;
+    for (int i = debut; i <= fin && i < (int)m_nbTrajets; ++i)
+    {
+        const Trajet* t = m_collectionTrajets[i];
+        if (mode == 1 && dynamic_cast<const TrajetSimple*>(t) == nullptr) continue;
+        if (mode == 2 && dynamic_cast<const TrajetCompose*>(t) == nullptr) continue;
+        if (mode == 3)
+        {
+            if (villeDep && strcmp(t->GetVilleDepart(), villeDep) != 0) continue;
+            if (villeArr && strcmp(t->GetVilleArrivee(), villeArr) != 0) continue;
+        }
+        t->Sauvegarder(ofs);
+    }
+    ofs.close();
+}
+
+// Charge des trajets depuis un fichier et les ajoute au catalogue
+void Catalogue::Charger(const char* nomFichier, int mode, const char* villeDep, const char* villeArr, int n, int m)
+{
+    std::ifstream ifs(nomFichier);
+    if (!ifs)
+    {
+        std::cout << "Erreur d'ouverture du fichier en lecture !" << std::endl;
+        return;
+    }
+    int index = 0;
+    while (!ifs.eof())
+    {
+        std::streampos pos = ifs.tellg();
+        std::string type;
+        std::getline(ifs, type, ';');
+        if (type == "SIMPLE")
+        {
+            ifs.seekg(pos);
+            TrajetSimple* ts = TrajetSimple::Charger(ifs);
+            if (!ts) break;
+            if (mode == 1 && villeDep && strcmp(ts->GetVilleDepart(), villeDep) != 0) { delete ts; continue; }
+            if (mode == 2 && villeArr && strcmp(ts->GetVilleArrivee(), villeArr) != 0) { delete ts; continue; }
+            if (mode == 4 && (index < n || index > m)) { delete ts; ++index; continue; }
+            Ajouter(ts);
+            ++index;
+        }
+        else if (type == "COMPOSE")
+        {
+            ifs.seekg(pos);
+            TrajetCompose* tc = TrajetCompose::Charger(ifs);
+            if (!tc) break;
+            if (mode == 1 && villeDep && strcmp(tc->GetVilleDepart(), villeDep) != 0) { delete tc; continue; }
+            if (mode == 2 && villeArr && strcmp(tc->GetVilleArrivee(), villeArr) != 0) { delete tc; continue; }
+            if (mode == 4 && (index < n || index > m)) { delete tc; ++index; continue; }
+            Ajouter(tc);
+            ++index;
+        }
+        else
+        {
+            break;
+        }
+    }
+    ifs.close();
+}
 
 //-------------------------------------------- Constructeurs - destructeur
 
